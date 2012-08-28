@@ -1,0 +1,6 @@
+EN bref :
+
+./install_pybox.sh
+python2 robot.py
+
+Le reste ce sont des "libs" nécessaires
