@@ -23,68 +23,79 @@ __doc__ = """
 
 from framework import *
 from Box2D import *
+from math import cos, sin, pi
 
 maxForwardSpeed = 250
 maxBackwardSpeed = -40
 maxDriveForce = 500
 
+
+
 class TDTire:
-	def __init__(self, world, location):
+	def __init__(self, name, world, location):
+		self.name = name
 		self.currentTraction = 1
 		self.bodyDef = b2BodyDef()
 		self.m_body  = world.CreateDynamicBody(
-			shapes=b2PolygonShape(box=(0.5, 1.25)), 
+			shapes=b2PolygonShape(box=(0.5*0.5, 0.5*1.25)), 
 			position=location,
 			angularDamping=2,
             linearDamping=0.1,
             shapeFixture=b2FixtureDef(density=2.0))
+		#self.mass = 1000  # pratique pour accentuer les traits durant les tests
+		self.v = self.m_body.linearVelocity
 
 	def getLateralVelocity(self):
 		currentRightNormal = self.m_body.GetWorldVector( b2Vec2(1,0) )
+		#print self.name, "lateral speed", b2Dot(currentRightNormal, self.m_body.linearVelocity)
 		return b2Dot(currentRightNormal, self.m_body.linearVelocity) * currentRightNormal
 		
 	def getForwardVelocity(self):
 		currentForwardNormal = self.m_body.GetWorldVector( b2Vec2(0,1) )
+		#print self.name, "forward speed", b2Dot( currentForwardNormal, self.m_body.linearVelocity )
 		return b2Dot( currentForwardNormal, self.m_body.linearVelocity ) * currentForwardNormal;
 		
 	def updateFriction(self):
-		impulse = 1*(self.m_body.mass * - self.getLateralVelocity())
+		impulse = 1.7*(self.m_body.mass * - self.getLateralVelocity())
+		self.v = self.m_body.linearVelocity
 		pt = self.m_body.worldCenter
 		self.m_body.ApplyLinearImpulse(impulse=(impulse.x, impulse.y), point=(pt.x, pt.y))
-		self.m_body.ApplyAngularImpulse( impulse = 0.8 * self.m_body.inertia * -self.m_body.angularVelocity )
+		self.m_body.ApplyAngularImpulse( impulse = 0.9 * self.m_body.inertia * -self.m_body.angularVelocity )
+		
+	def stop(self):
+		impulse = 1.7*(self.m_body.mass * - self.m_body.linearVelocity)
+		self.v = self.m_body.linearVelocity
+		pt = self.m_body.worldCenter
+		self.m_body.ApplyLinearImpulse(impulse=(impulse.x, impulse.y), point=(pt.x, pt.y))
+		self.m_body.ApplyAngularImpulse( impulse = 0.9 * self.m_body.inertia * -self.m_body.angularVelocity )
     
-	def updateDrive(self, controlState):
-		desiredSpeed = 0;
-		if controlState == 1:
-			desiredSpeed = maxForwardSpeed
-		elif controlState == -1:
-			desiredSpeed = maxBackwardSpeed
-
-		currentForwardNormal = self.m_body.GetWorldVector( b2Vec2(0,1) )
-		currentSpeed = b2Dot( self.getForwardVelocity(), currentForwardNormal )
-		force = 0;
-		if ( desiredSpeed > currentSpeed ):
-			force = maxDriveForce
-		elif ( desiredSpeed < currentSpeed ):
-			force = -maxDriveForce
+	def updateDrive(self, w):
+		if w == 0:
+			self.stop()
 		else:
-			return
-		self.m_body.ApplyForce( self.currentTraction * force * currentForwardNormal, self.m_body.worldCenter )
+			currentForwardNormal = self.m_body.GetWorldVector( b2Vec2(0,1) )
+			currentSpeed = b2Dot( self.getForwardVelocity(), currentForwardNormal )
+			#self.m_body.ApplyForce( self.currentTraction * w * currentForwardNormal, self.m_body.worldCenter )
+			impulse = 1*(self.m_body.mass * (-self.getForwardVelocity() + w*currentForwardNormal))
+			pt = self.m_body.worldCenter
+			self.m_body.ApplyLinearImpulse(impulse=(impulse.x, impulse.y), point=(pt.x, pt.y))
 
 class Robot:
 	def __init__(self, world):
+		self.largeur = 3
 		sy = 3
-		y = sy+1
+		y = sy+15
 		self.bodyDef = b2BodyDef()
 		self.m_body  = world.CreateDynamicBody(
-			shapes=b2PolygonShape(box=(3, sy)), 
+			shapes=b2PolygonShape(box=(self.largeur, sy)), 
 			position=(0,y),
+			density=1, friction=0.0,
             shapeFixture=b2FixtureDef(density=2.0))
 		#print "robot mass", self.m_body.mass
 		#self.mass = 200
             
-		self.leftWheel = TDTire(world, (-3.3, y))
-		self.rightWheel = TDTire(world, (3.3, y))
+		self.leftWheel = TDTire("left", world, (-3.3, y))
+		self.rightWheel = TDTire("right", world, (3.3, y))
 
 
 		jointR = world.CreateRevoluteJoint(bodyA=self.m_body, 
@@ -94,20 +105,17 @@ class Robot:
 				bodyB=self.leftWheel.m_body, anchor=(-2.7, y),
 				lowerAngle = 0, upperAngle = 0, enableLimit = True)
 				
-	def update(self, action):
+	def update(self, w_gauche, w_droite):
 		self.rightWheel.updateFriction()
 		self.leftWheel.updateFriction()
-		if action[0] == 1:
-			self.rightWheel.updateDrive(action[1])
-		elif action[0] == -1:
-			self.leftWheel.updateDrive(action[1])
+		self.rightWheel.updateDrive(w_droite)
+		self.leftWheel.updateDrive(w_gauche)
           
 class ApplyForce2 (Framework):
 	name="ApplyForce2"
 	def __init__(self):
 		super(ApplyForce2, self).__init__()
 		self.world.gravity = (0.0, 0.0)
-		self.action = (0,0)
 
 		# The boundaries
 		ground = self.world.CreateBody(position=(0, 20))
@@ -119,29 +127,41 @@ class ApplyForce2 (Framework):
 							  (-20,-20) ]
 							)
 
+		self.w_gauche = 0           # Vitesse angulaire de la roue gauche
+		self.w_droite = 0
+
 		self.robot = Robot(self.world)
 		self.body = self.robot.m_body
+		
+		self.tire = TDTire("a tire", self.world, (10, 10))
 
 			
 		
 	 
 	def Keyboard(self, key):
 		if key==Keys.K_p:
-			self.action = (1,1)
+			self.w_droite += 1
 		elif key==Keys.K_l:
-			self.action = (1,-1)
+			self.w_droite -= 1
 		elif key==Keys.K_a:
-			self.action = (-1,1)
+			self.w_gauche += 1
 		elif key==Keys.K_q:
-			self.action = (-1,-1)
-		else:
-			self.action = (0, 0)
+			self.w_gauche -= 1
+		print ("Vitesse angulaire des roues : w_gauche :", self.w_gauche, 
+					" -- w_droite :", self.w_droite)
 			
 	def Step(self, settings):
 		super(ApplyForce2, self).Step(settings)
-		self.robot.update(self.action)
-		print self.action
-		self.action = (0, 0)
+		#self.robot.update(self.w_gauche, self.w_droite)
+		v = 0.5*(self.w_droite + self.w_gauche)
+		w = 0.5*(self.w_droite - self.w_gauche)
+		self.robot.m_body.linearVelocity = b2Vec2(v * cos(self.body.angle+pi/2), v * sin(self.body.angle+pi/2))
+		self.robot.m_body.angularVelocity = w/float(self.robot.largeur+0.6)
+		#self.tire.m_body.ApplyForce( b2Vec2(-100,0), self.tire.m_body.worldCenter );
+		#self.tire.m_body.linearVelocity = b2Vec2(0,5)
+		self.tire.updateFriction()
+		
+
 
 if __name__=="__main__":
      main(ApplyForce2)
