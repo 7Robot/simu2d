@@ -1,12 +1,12 @@
-#ifndef SIMULATORVIEW_H
-#define SIMULATORVIEW_H
+#ifndef SIMULATORSCENE_H
+#define SIMULATORSCENE_H
 
 #include <QtGui>
 #include <Box2D.h>
 
-
 class Simulator;
-class Q_GUI_EXPORT SimulatorScene : public QGraphicsScene
+
+class SimulatorScene : public QGraphicsScene
 {
     Q_OBJECT
 public:
@@ -19,12 +19,30 @@ public:
 private:
     b2Vec2 mousePos;
     b2MouseJoint *mouseJoint;
-
-signals:
-    
-public slots:
-    
 };
 
 
-#endif // SIMULATORVIEW_H
+class QueryCallback : public b2QueryCallback // From Box2D's TestBed.
+{
+public:
+    QueryCallback(const b2Vec2& point) : point(point), fixture(NULL)
+    { }
+
+    bool ReportFixture(b2Fixture* f)
+    {
+        b2Body* body = f->GetBody();
+        if (body->GetType() == b2_dynamicBody) {
+            bool inside = f->TestPoint(point);
+            if (inside) {
+                fixture = f;
+                return false; // We are done, terminate the query.
+            }
+        }
+        return true; // Continue the query.
+    }
+
+    b2Vec2 point;
+    b2Fixture* fixture;
+};
+
+#endif // SIMULATORSCENE_H

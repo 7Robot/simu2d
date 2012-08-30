@@ -13,11 +13,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     Simulator.cpp \
-    SimulatorScene.cpp
+    SimulatorScene.cpp \
+    SimulatorView.cpp
 
 HEADERS  += mainwindow.h \
     Simulator.h \
-    SimulatorScene.h
+    SimulatorScene.h \
+    SimulatorView.h
 
 FORMS    += mainwindow.ui
 

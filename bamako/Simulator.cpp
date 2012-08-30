@@ -1,15 +1,16 @@
-
 #include "Simulator.h"
+#include "SimulatorScene.h"
 
 
 Simulator::Simulator(SimulatorScene *scene, QObject *parent)
         : QObject(parent), scene(scene), timerId(0)
 {
-    world = new b2World(b2Vec2(0.0f, 1.0f)); // Zero gravity.
+    world = new b2World(b2Vec2(0.0f, 0.0f)); // Zero gravity.
 
 
     b2BodyDef bodyDef;
     b2PolygonShape polygonShape;
+    b2CircleShape circleShape;
     b2ChainShape chainShape;
     b2FixtureDef fixtureDef;
 
@@ -18,7 +19,7 @@ Simulator::Simulator(SimulatorScene *scene, QObject *parent)
     groundBody = world->CreateBody(&bodyDef);
     polygonShape.SetAsBox(1.5f, 1.0f);
     fixtureDef.isSensor = true;
-    addPolygon(groundBody, polygonShape, fixtureDef);
+    addPolygon(groundBody, polygonShape, fixtureDef, Qt::blue);
 
     // Ground borders.
     b2Vec2 vs[4];
@@ -33,28 +34,50 @@ Simulator::Simulator(SimulatorScene *scene, QObject *parent)
 
     // Robot.
     bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(0.0f, 0.0f);
+    bodyDef.position.Set(1.0f, 0.5f);
     robotBody = world->CreateBody(&bodyDef);
     polygonShape.SetAsBox(0.2f, 0.2f);
     fixtureDef.density = 1.0f;
     fixtureDef.friction = 0.3f;
-    addPolygon(robotBody, polygonShape, fixtureDef);
+    addPolygon(robotBody, polygonShape, fixtureDef, Qt::gray);
+
+    // Coin.
+    bodyDef.position.Set(0.0f, 0.0f);
+    b2Body *coinBody = world->CreateBody(&bodyDef);
+    circleShape.m_radius = 0.06f;
+    fixtureDef.density = 1.0f;
+    fixtureDef.friction = 0.3f;
+    addCircle(coinBody, circleShape, fixtureDef, Qt::white);
+    circleShape.m_radius = 0.01f;
+    addCircle(coinBody, circleShape, fixtureDef, Qt::blue);
 }
 
-void Simulator::addPolygon(b2Body *body, b2PolygonShape &polygonShape, b2FixtureDef &fixtureDef)
+void Simulator::addPolygon(b2Body *body, b2PolygonShape &shape, b2FixtureDef &fixtureDef, QColor color)
 {
-    fixtureDef.shape = &polygonShape;
+    fixtureDef.shape = &shape;
     b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 
     if(scene != NULL) {
         QPolygonF polygon;
-        for(int i = 0; i < polygonShape.GetVertexCount(); i++) {
-            b2Vec2 vertex =  polygonShape.GetVertex(i);
+        for(int i = 0; i < shape.GetVertexCount(); i++) {
+            b2Vec2 vertex =  shape.GetVertex(i);
             polygon << QPointF(vertex.x, vertex.y);
         }
 
-        QGraphicsPolygonItem *item = scene->addPolygon(polygon, QPen(Qt::NoPen), QBrush(Qt::blue));
-        item->setOpacity(.4);
+        QGraphicsPolygonItem *item = scene->addPolygon(polygon, QPen(Qt::NoPen), QBrush(color));
+        fixture->SetUserData((void*)item);
+    }
+}
+
+void Simulator::addCircle(b2Body *body, b2CircleShape &shape, b2FixtureDef &fixtureDef, QColor color)
+{
+    fixtureDef.shape = &shape;
+    b2Fixture* fixture = body->CreateFixture(&fixtureDef);
+
+    if(scene != NULL) {
+        QGraphicsEllipseItem *item = scene->addEllipse(-shape.m_radius,   -shape.m_radius,
+                                                       2 * shape.m_radius, 2 * shape.m_radius,
+                                                       QPen(Qt::NoPen), QBrush(color));
         fixture->SetUserData((void*)item);
     }
 }

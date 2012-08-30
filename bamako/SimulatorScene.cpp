@@ -2,32 +2,12 @@
 #include "Simulator.h"
 
 
-class QueryCallback : public b2QueryCallback // From Box2D's TestBed.
-{
-public:
-    QueryCallback(const b2Vec2& point) : point(point), fixture(NULL)
-        { }
-
-    bool ReportFixture(b2Fixture* f)
-    {
-        b2Body* body = f->GetBody();
-        if (body->GetType() == b2_dynamicBody) {
-            bool inside = f->TestPoint(point);
-            if (inside) {
-                fixture = f;
-                return false; // We are done, terminate the query.
-            }
-        }
-        return true; // Continue the query.
-    }
-
-    b2Vec2 point;
-    b2Fixture* fixture;
-};
 
 SimulatorScene::SimulatorScene(QWidget *parent) :
     QGraphicsScene(parent), mouseJoint(NULL)
 {
+    setItemIndexMethod(QGraphicsScene::NoIndex);
+    setSceneRect(-1.50, -1.0, 3.0, 2.0);
 }
 
 void SimulatorScene::mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent)

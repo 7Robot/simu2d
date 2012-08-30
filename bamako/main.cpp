@@ -2,6 +2,8 @@
 
 #include "mainwindow.h"
 #include "Simulator.h"
+#include "SimulatorScene.h"
+#include "SimulatorView.h"
 
 int main(int argc, char *argv[])
 {
@@ -9,6 +11,7 @@ int main(int argc, char *argv[])
     bool headless = false;
 
     SimulatorScene *scene = NULL;
+
     if(!headless) {
         scene = new SimulatorScene();
     }
