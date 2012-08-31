@@ -3,11 +3,14 @@
 
 
 Simulator::Simulator(SimulatorScene *scene, QObject *parent)
-        : QObject(parent), scene(scene), timerId(0)
+    : QObject(parent), scene(scene), timerId(0), gravity(9.8), time(0)
 {
     world = new b2World(b2Vec2(0.0f, 0.0f)); // Zero gravity.
+    populate();
+}
 
-
+void Simulator::populate()
+{
     b2BodyDef bodyDef;
     b2PolygonShape polygonShape;
     b2CircleShape circleShape;
@@ -40,6 +43,7 @@ Simulator::Simulator(SimulatorScene *scene, QObject *parent)
     fixtureDef.density = 1.0f;
     fixtureDef.friction = 0.3f;
     addPolygon(robotBody, polygonShape, fixtureDef, Qt::gray);
+    addFriction(robotBody);
 
     // Coin.
     bodyDef.position.Set(0.0f, 0.0f);
@@ -50,6 +54,22 @@ Simulator::Simulator(SimulatorScene *scene, QObject *parent)
     addCircle(coinBody, circleShape, fixtureDef, Qt::white);
     circleShape.m_radius = 0.01f;
     addCircle(coinBody, circleShape, fixtureDef, Qt::blue);
+    addFriction(coinBody);
+}
+
+void Simulator::addFriction(b2Body *body)
+{
+    float32 mass = body->GetMass();
+    float32 I = body->GetInertia();
+
+    b2FrictionJointDef jd;
+    jd.bodyA = groundBody;
+    jd.bodyB = body;
+    jd.collideConnected = true;
+    jd.maxForce = mass * gravity;
+    jd.maxTorque = I * gravity; // TODO
+
+    world->CreateJoint(&jd);
 }
 
 void Simulator::addPolygon(b2Body *body, b2PolygonShape &shape, b2FixtureDef &fixtureDef, QColor color)
@@ -118,11 +138,19 @@ void Simulator::updateScene() // Refresh the interface.
 void Simulator::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == timerId) {
+        motionControlStep();
         world->Step(B2_TIMESTEP, B2_VELOCITY_ITERATIONS, B2_POSITION_ITERATIONS);
-        // FIXME One refresh for multiple steps.
-
-        if(scene != NULL)
-            updateScene();
+        updateScene();
     }
     QObject::timerEvent(event);
+}
+
+void Simulator::motionControlStep()
+{
+/*    float velChange = desiredVel - vel.x;
+    float impulse = body->GetMass() * velChange; //disregard time factor
+    robotBody->ApplyLinearImpulse(b2Vec2(impulse, 0).,
+                                  robotBody->GetWorldCenter());
+    robotBody->ApplyLinearImpulse(impulse, robotBody->GetWorldCenter());
+*/
 }
