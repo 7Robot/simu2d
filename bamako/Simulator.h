@@ -35,6 +35,7 @@ public:
     ~Simulator();
 
     void updateScene();
+    void motionControlStep();
     b2World *world;
 
     b2Body* groundBody;
