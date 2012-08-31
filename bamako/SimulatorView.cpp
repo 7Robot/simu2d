@@ -1,7 +1,9 @@
 #include "SimulatorView.h"
+#include "Simulator.h"
+#include "Robot.h"
 
-SimulatorView::SimulatorView(SimulatorScene *scene, QWidget *parent) :
-    QGraphicsView(scene, parent), scene(scene)
+SimulatorView::SimulatorView(Simulator *simulator, QWidget *parent) :
+    QGraphicsView(parent)
 {
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -12,6 +14,10 @@ SimulatorView::SimulatorView(SimulatorScene *scene, QWidget *parent) :
     QSizePolicy policy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     policy.setHeightForWidth(true);
     setSizePolicy(policy);
+
+    scene = new SimulatorScene(simulator);
+    simulator->scene = scene;
+    setScene(scene);
 
     keyStates['Z'] = false;
     keyStates['Q'] = false;
@@ -41,16 +47,20 @@ void SimulatorView::resizeEvent(QResizeEvent *event)
 
 void SimulatorView::keyPressEvent(QKeyEvent * event)
 {
-    if(keyStates.contains(event->key()))
+    if(keyStates.contains(event->key())) {
         keyStates[event->key()] = true;
+        scene->simulator->robot->KeyboardInput(keyStates);
+    }
     else
         QWidget::keyPressEvent(event);
 }
 
 void SimulatorView::keyReleaseEvent(QKeyEvent * event)
 {
-    if(keyStates.contains(event->key()))
+    if(keyStates.contains(event->key())) {
         keyStates[event->key()] = false;
+        scene->simulator->robot->KeyboardInput(keyStates);
+    }
     else
         QWidget::keyReleaseEvent(event);
 }

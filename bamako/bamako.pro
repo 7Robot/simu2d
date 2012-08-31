@@ -11,17 +11,21 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
     Simulator.cpp \
     SimulatorScene.cpp \
-    SimulatorView.cpp
+    SimulatorView.cpp \
+    Robot.cpp \
+    MainWindow.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += \
     Simulator.h \
     SimulatorScene.h \
-    SimulatorView.h
+    SimulatorView.h \
+    Robot.h \
+    MainWindow.h
 
-FORMS    += mainwindow.ui
+FORMS    += \
+    MainWindow.ui
 
 INCLUDEPATH +=/usr/local/include/Box2D/
 #LIBPATH += /home/ahanssen/Box2D_v2.0.1/Box2D/Source/Gen/float

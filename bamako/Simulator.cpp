@@ -1,12 +1,12 @@
 #include "Simulator.h"
 #include "SimulatorScene.h"
+#include "Robot.h"
 
 
-Simulator::Simulator(SimulatorScene *scene, QObject *parent)
-    : QObject(parent), scene(scene), timerId(0), gravity(9.8), time(0)
+Simulator::Simulator(QObject *parent)
+    : QObject(parent), timerId(0), gravity(9.8), time(0)
 {
     world = new b2World(b2Vec2(0.0f, 0.0f)); // Zero gravity.
-    populate();
 }
 
 void Simulator::populate()
@@ -37,13 +37,15 @@ void Simulator::populate()
 
     // Robot.
     bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(1.0f, 0.5f);
+    bodyDef.position.Set(1.2f, 0.7f);
+    bodyDef.angle = 0.0f;
     robotBody = world->CreateBody(&bodyDef);
     polygonShape.SetAsBox(0.2f, 0.2f);
     fixtureDef.density = 1.0f;
     fixtureDef.friction = 0.3f;
     addPolygon(robotBody, polygonShape, fixtureDef, Qt::gray);
     addFriction(robotBody);
+    robot = new Robot(this, robotBody);
 
     // Coin.
     bodyDef.position.Set(0.0f, 0.0f);
@@ -55,6 +57,8 @@ void Simulator::populate()
     circleShape.m_radius = 0.01f;
     addCircle(coinBody, circleShape, fixtureDef, Qt::blue);
     addFriction(coinBody);
+
+    updateScene();
 }
 
 void Simulator::addFriction(b2Body *body)
@@ -115,6 +119,9 @@ Simulator::~Simulator()
 
 void Simulator::updateScene() // Refresh the interface.
 {
+    if(scene == NULL)
+        return;
+
     for (b2Body* body = world->GetBodyList(); body; body = body->GetNext()) {
         if(body->IsAwake()) {
             // FIXME check that the position changed significantly for less overhead.
@@ -138,19 +145,8 @@ void Simulator::updateScene() // Refresh the interface.
 void Simulator::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == timerId) {
-        motionControlStep();
-        world->Step(B2_TIMESTEP, B2_VELOCITY_ITERATIONS, B2_POSITION_ITERATIONS);
+        robot->Step(B2_TIMESTEP, B2_VELOCITY_ITERATIONS, B2_POSITION_ITERATIONS);
         updateScene();
     }
     QObject::timerEvent(event);
-}
-
-void Simulator::motionControlStep()
-{
-/*    float velChange = desiredVel - vel.x;
-    float impulse = body->GetMass() * velChange; //disregard time factor
-    robotBody->ApplyLinearImpulse(b2Vec2(impulse, 0).,
-                                  robotBody->GetWorldCenter());
-    robotBody->ApplyLinearImpulse(impulse, robotBody->GetWorldCenter());
-*/
 }

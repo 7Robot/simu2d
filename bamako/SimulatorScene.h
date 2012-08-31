@@ -10,7 +10,7 @@ class SimulatorScene : public QGraphicsScene
 {
     Q_OBJECT
 public:
-    explicit SimulatorScene(QWidget *parent = 0);
+    explicit SimulatorScene(Simulator* simulator, QWidget *parent = 0);
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent * mouseEvent);

@@ -3,8 +3,8 @@
 
 
 
-SimulatorScene::SimulatorScene(QWidget *parent) :
-    QGraphicsScene(parent), mouseJoint(NULL)
+SimulatorScene::SimulatorScene(Simulator *simulator, QWidget *parent) :
+    QGraphicsScene(parent), simulator(simulator), mouseJoint(NULL)
 {
     setItemIndexMethod(QGraphicsScene::NoIndex);
     setSceneRect(-1.50, -1.0, 3.0, 2.0);
