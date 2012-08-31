@@ -40,8 +40,6 @@ void SimulatorScene::mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent)
         mouseJoint = (b2MouseJoint*)simulator->world->CreateJoint(&md);
         body->SetAwake(true);
     }
-
-    //QGraphicsScene::mousePressEvent(mouseEvent);
 }
 
 void SimulatorScene::mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent)
@@ -53,16 +51,12 @@ void SimulatorScene::mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent)
     if(mouseJoint) {
         mouseJoint->SetTarget(p);
     }
-
-    //QGraphicsScene::mouseMoveEvent(mouseEvent);
 }
 
-void SimulatorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent * mouseEvent)
+void SimulatorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
 {
     if(mouseJoint) {
         simulator->world->DestroyJoint(mouseJoint);
         mouseJoint = NULL;
     }
-
-    //QGraphicsScene::mouseReleaseEvent(mouseEvent);
 }

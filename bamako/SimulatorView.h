@@ -11,10 +11,13 @@ public:
     explicit SimulatorView(SimulatorScene *scene, QWidget *parent = 0);
     int heightForWidth(int w) const;
     void resizeEvent(QResizeEvent *event);
+    void keyPressEvent(QKeyEvent * event);
+    void keyReleaseEvent(QKeyEvent * event);
     QSize sizeHint() const;
 
 private:
     SimulatorScene *scene;
+    QMap<int, bool> keyStates;
 };
 
 #endif // SIMULATORVIEW_H

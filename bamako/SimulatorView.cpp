@@ -7,10 +7,16 @@ SimulatorView::SimulatorView(SimulatorScene *scene, QWidget *parent) :
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     setFrameShape(QFrame::NoFrame);
+    setRenderHint(QPainter::Antialiasing);
 
     QSizePolicy policy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     policy.setHeightForWidth(true);
     setSizePolicy(policy);
+
+    keyStates['Z'] = false;
+    keyStates['Q'] = false;
+    keyStates['S'] = false;
+    keyStates['D'] = false;
 }
 
 int SimulatorView::heightForWidth(int w) const
@@ -31,4 +37,20 @@ void SimulatorView::resizeEvent(QResizeEvent *event)
     qreal s = (sx < sy) ? sx : sy;
     resetMatrix();
     scale(s, s);
+}
+
+void SimulatorView::keyPressEvent(QKeyEvent * event)
+{
+    if(keyStates.contains(event->key()))
+        keyStates[event->key()] = true;
+    else
+        QWidget::keyPressEvent(event);
+}
+
+void SimulatorView::keyReleaseEvent(QKeyEvent * event)
+{
+    if(keyStates.contains(event->key()))
+        keyStates[event->key()] = false;
+    else
+        QWidget::keyReleaseEvent(event);
 }

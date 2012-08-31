@@ -21,7 +21,6 @@ private:
     b2MouseJoint *mouseJoint;
 };
 
-
 class QueryCallback : public b2QueryCallback // From Box2D's TestBed.
 {
 public:
