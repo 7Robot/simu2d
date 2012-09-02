@@ -4,7 +4,6 @@
 #include <QtGui>
 #include <Box2D.h>
 
-
 static const float32 B2_TIMESTEP = 1.0f / 60.0f;
 static const int32 B2_VELOCITY_ITERATIONS = 6;
 static const int32 B2_POSITION_ITERATIONS = 2;
@@ -12,6 +11,7 @@ static const float PI = 3.14159265359;
 
 class SimulatorScene;
 class Robot;
+class MainWindow;
 
 class Simulator : public QObject
 {
@@ -20,10 +20,12 @@ public:
     Simulator(QObject *parent = 0);
     void populate();
     void start();
+    bool stop();
     ~Simulator();
 
     b2World *world;
     Robot *robot;
+    MainWindow * mainWindow;
     SimulatorScene *scene;
 
     b2Body* groundBody;

@@ -17,7 +17,7 @@ class Robot
 {
 public:
     Robot(Simulator *simulator, b2Body *robotBody);
-    void Step(float timeStep, int velocityIterations, int positionIterations);
+    void Step();
     void KeyboardInput(QMap<int, bool> keyStates);
 
     float angle;

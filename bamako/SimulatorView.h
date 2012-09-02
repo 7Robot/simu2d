@@ -8,17 +8,18 @@ class SimulatorView : public QGraphicsView
 {
     Q_OBJECT
 public:
-    explicit SimulatorView(Simulator *simulator, QWidget *parent = 0);
+    explicit SimulatorView(QWidget *parent = 0);
     int heightForWidth(int w) const;
     void resizeEvent(QResizeEvent *event);
     void keyPressEvent(QKeyEvent * event);
     void keyReleaseEvent(QKeyEvent * event);
     QSize sizeHint() const;
+    void setSimulator(Simulator *simulator);
+    SimulatorScene * scene();
 
 private:
     void RefreshSetpoints();
 
-    SimulatorScene *scene;
     QMap<int, bool> keyStates;
 
 };

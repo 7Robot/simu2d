@@ -1,4 +1,5 @@
 #include "Robot.h"
+#include "MainWindow.h"
 
 Robot::Robot(Simulator *simulator, b2Body *robotBody) : robotBody(robotBody), simulator(simulator)
 {
@@ -17,7 +18,7 @@ Robot::Robot(Simulator *simulator, b2Body *robotBody) : robotBody(robotBody), si
 
 // http://www.iforce2d.net/b2dtut/constant-speed
 // http://clubelek.insa-lyon.fr/joomla/fr/base_de_connaissances/informatique/asservissement_et_pilotage_de_robot_auto.php
-void Robot::Step(float timeStep, int velocityIterations, int positionIterations)
+void Robot::Step()
 {
     // Motion control.
     const float gamma = 0.2; // Acceleration limit (m/s²), cf RCVA diapo 21.
@@ -28,7 +29,7 @@ void Robot::Step(float timeStep, int velocityIterations, int positionIterations)
             speedSetpoint = sqrt(2*gamma*distanceSetpoint);
         }
         else { // Speed up or plateau.
-            speedSetpoint = b2Min(speedLimit, speed + timeStep * gamma);
+            speedSetpoint = b2Min(speedLimit, speed + B2_TIMESTEP * gamma);
         }
 
         // PID
@@ -38,6 +39,7 @@ void Robot::Step(float timeStep, int velocityIterations, int positionIterations)
 
         robotBody->ApplyLinearImpulse(impulse * b2Rot(angle).GetXAxis(),
                                       robotBody->GetWorldCenter());
+        simulator->mainWindow->plotStep(0, 0);
     }
 
     if(motionControl & AngleControl && false) {
@@ -49,7 +51,7 @@ void Robot::Step(float timeStep, int velocityIterations, int positionIterations)
     //float impulse = body->GetMass() * velChange; //disregard time factor
 
     // World simulation.
-    simulator->world->Step(timeStep, velocityIterations, positionIterations);
+    simulator->world->Step(B2_TIMESTEP, B2_VELOCITY_ITERATIONS, B2_POSITION_ITERATIONS);
 
     // Odometry.
     float newAngle = robotBody->GetAngle();

@@ -15,18 +15,19 @@ SOURCES += main.cpp\
     SimulatorScene.cpp \
     SimulatorView.cpp \
     Robot.cpp \
-    MainWindow.cpp
+    MainWindow.cpp \
+    qcustomplot.cpp
 
 HEADERS  += \
     Simulator.h \
     SimulatorScene.h \
     SimulatorView.h \
     Robot.h \
-    MainWindow.h
+    MainWindow.h \
+    qcustomplot.h
 
 FORMS    += \
     MainWindow.ui
 
 INCLUDEPATH +=/usr/local/include/Box2D/
-#LIBPATH += /home/ahanssen/Box2D_v2.0.1/Box2D/Source/Gen/float
-LIBS += -lBox2D
+LIBS += -lBox2D #utile ?

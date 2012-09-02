@@ -2,7 +2,7 @@
 #include "Simulator.h"
 #include "Robot.h"
 
-SimulatorView::SimulatorView(Simulator *simulator, QWidget *parent) :
+SimulatorView::SimulatorView(QWidget *parent) :
     QGraphicsView(parent)
 {
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -10,19 +10,24 @@ SimulatorView::SimulatorView(Simulator *simulator, QWidget *parent) :
 
     setFrameShape(QFrame::NoFrame);
     setRenderHint(QPainter::Antialiasing);
-
-    QSizePolicy policy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    policy.setHeightForWidth(true);
-    setSizePolicy(policy);
-
-    scene = new SimulatorScene(simulator);
-    simulator->scene = scene;
-    setScene(scene);
+    setStyleSheet("background: transparent");
 
     keyStates['Z'] = false;
     keyStates['Q'] = false;
     keyStates['S'] = false;
     keyStates['D'] = false;
+}
+
+void SimulatorView::setSimulator(Simulator *simulator)
+{
+    SimulatorScene *scene = new SimulatorScene(simulator);
+    setScene(scene);
+    simulator->scene = scene;
+}
+
+SimulatorScene * SimulatorView::scene()
+{
+    return (SimulatorScene*)QGraphicsView::scene();
 }
 
 int SimulatorView::heightForWidth(int w) const
@@ -38,8 +43,11 @@ QSize SimulatorView::sizeHint() const
 
 void SimulatorView::resizeEvent(QResizeEvent *event)
 {
-    qreal sx = event->size().width()  / scene->sceneRect().width();
-    qreal sy = event->size().height() / scene->sceneRect().height();
+    QRectF rect(0, 0, 300, 200);
+    if(scene())
+        rect  = scene()->sceneRect();
+    qreal sx = event->size().width()  / rect.width();
+    qreal sy = event->size().height() / rect.height();
     qreal s = (sx < sy) ? sx : sy;
     resetMatrix();
     scale(s, s);
@@ -49,7 +57,8 @@ void SimulatorView::keyPressEvent(QKeyEvent * event)
 {
     if(keyStates.contains(event->key())) {
         keyStates[event->key()] = true;
-        scene->simulator->robot->KeyboardInput(keyStates);
+        if(scene())
+            scene()->simulator->robot->KeyboardInput(keyStates);
     }
     else
         QWidget::keyPressEvent(event);
@@ -59,7 +68,8 @@ void SimulatorView::keyReleaseEvent(QKeyEvent * event)
 {
     if(keyStates.contains(event->key())) {
         keyStates[event->key()] = false;
-        scene->simulator->robot->KeyboardInput(keyStates);
+        if(scene())
+            scene()->simulator->robot->KeyboardInput(keyStates);
     }
     else
         QWidget::keyReleaseEvent(event);

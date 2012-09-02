@@ -1,10 +1,10 @@
 #include "Simulator.h"
 #include "SimulatorScene.h"
 #include "Robot.h"
-
+#include "MainWindow.h"
 
 Simulator::Simulator(QObject *parent)
-    : QObject(parent), timerId(0), gravity(9.8), time(0)
+    : QObject(parent), mainWindow(NULL), scene(NULL), timerId(0), gravity(9.8), time(0)
 {
     world = new b2World(b2Vec2(0.0f, 0.0f)); // Zero gravity.
 }
@@ -112,6 +112,14 @@ void Simulator::start()
         timerId = startTimer(B2_TIMESTEP * 1000);
 }
 
+bool Simulator::stop()
+{
+    bool tmp = timerId;
+    killTimer(timerId);
+    timerId = 0;
+    return tmp;
+}
+
 Simulator::~Simulator()
 {
     delete world;
@@ -145,7 +153,7 @@ void Simulator::updateScene() // Refresh the interface.
 void Simulator::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == timerId) {
-        robot->Step(B2_TIMESTEP, B2_VELOCITY_ITERATIONS, B2_POSITION_ITERATIONS);
+        robot->Step();
         updateScene();
     }
     QObject::timerEvent(event);
