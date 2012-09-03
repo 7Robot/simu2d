@@ -40,7 +40,7 @@ class TDTire:
 			shapes=b2PolygonShape(box=(0.5*0.5, 0.5*1.25)), 
 			position=location,
 			angularDamping=2,
-            linearDamping=0.1,
+            linearDamping=1,
             shapeFixture=b2FixtureDef(density=2.0))
 		#self.mass = 1000  # pratique pour accentuer les traits durant les tests
 		self.v = self.m_body.linearVelocity
@@ -64,10 +64,12 @@ class TDTire:
 		
 	def stop(self):
 		impulse = 1.7*(self.m_body.mass * - self.m_body.linearVelocity)
+		#impulse2 = (self.m_body.mass * - (self.m_body.linearVelocity-self.v)/(1/60.0))
+		#self.m_body.ApplyForce( impulse2, self.m_body.worldCenter )
 		self.v = self.m_body.linearVelocity
 		pt = self.m_body.worldCenter
 		self.m_body.ApplyLinearImpulse(impulse=(impulse.x, impulse.y), point=(pt.x, pt.y))
-		self.m_body.ApplyAngularImpulse( impulse = 0.9 * self.m_body.inertia * -self.m_body.angularVelocity )
+		#self.m_body.ApplyAngularImpulse( impulse = 0.9 * self.m_body.inertia * -self.m_body.angularVelocity )
     
 	def updateDrive(self, w):
 		if w == 0:
@@ -159,7 +161,8 @@ class ApplyForce2 (Framework):
 		self.robot.m_body.angularVelocity = w/float(self.robot.largeur+0.6)
 		#self.tire.m_body.ApplyForce( b2Vec2(-100,0), self.tire.m_body.worldCenter );
 		#self.tire.m_body.linearVelocity = b2Vec2(0,5)
-		self.tire.updateFriction()
+		#self.tire.updateFriction()
+		self.tire.stop()
 		
 
 

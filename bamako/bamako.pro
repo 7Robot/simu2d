@@ -11,6 +11,7 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
+    Asserv.cpp\
     Simulator.cpp \
     SimulatorScene.cpp \
     SimulatorView.cpp \
@@ -19,6 +20,7 @@ SOURCES += main.cpp\
     qcustomplot.cpp
 
 HEADERS  += \
+    Asserv.h\
     Simulator.h \
     SimulatorScene.h \
     SimulatorView.h \

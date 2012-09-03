@@ -1,3 +1,4 @@
+#include "Asserv.h"
 #include "Simulator.h"
 #include "SimulatorScene.h"
 #include "Robot.h"

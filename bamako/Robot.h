@@ -2,16 +2,9 @@
 #define ROBOT_H
 
 #include <Box2D.h>
+#include "Asserv.h"
 #include "Simulator.h"
 
-enum MotionControlType
-{
-    FreerunControl  = 0,
-    AngleControl    = 0x1,
-    DistanceControl = 0x2,
-    PolarControl    = 0x3,
-    SpeedControl    = 0x4
-};
 
 class Robot
 {
@@ -22,19 +15,10 @@ public:
 
     float angle;
     b2Vec2 position;
-    float speed;
     b2Body *robotBody;
 
 private:
-    float angleSetpoint;
-    float distanceSetpoint;
-    float omegaLimit;
-    float speedLimit;
-    MotionControlType motionControl;
-
-    // PID
-    float speedErrorInt;
-
+    Asserv *asserv;
     Simulator *simulator;
 
     // Les consignes arriveront dans le signal QTcpSocket::readyRead().
