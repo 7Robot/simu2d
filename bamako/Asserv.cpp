@@ -7,7 +7,7 @@ Asserv::Asserv(b2Body *robotBody, b2Vec2 position, float angle) {
     prevPosition = position;
     prevAngle = angle;
     speedLimit = 1;
-    motionControl = FreerunControl;
+    motionControl = DistanceControl;
     speed = 0;
     speedErrorInt = 0;
     this->robotBody = robotBody;
@@ -29,6 +29,7 @@ void Asserv::setDist(float distance) {
 // http://clubelek.insa-lyon.fr/joomla/fr/base_de_connaissances/informatique/asservissement_et_pilotage_de_robot_auto.php
 void Asserv::step(b2Vec2 position, float angle) {
     if(motionControl & DistanceControl) {
+        std::cout << "motion" << speed << std::endl;
         // Motion control.
         const float gamma = 0.2; // Acceleration limit (m/s²), cf RCVA diapo 21.
 
@@ -56,11 +57,11 @@ void Asserv::step(b2Vec2 position, float angle) {
     
     if(motionControl & AngleControl) {
         float angleDiff = angleSetpoint-angle;
-        if (angleDiff < -b2_pi)
+        /*if (angleDiff < -b2_pi)
             angleDiff += 2 * b2_pi;
         else if (angleDiff > b2_pi)
             angleDiff -= 2 * b2_pi; 
-        int sign = 1;
+        int sign = 1;*/
         if (angleDiff < 0)
             sign = -1;
         robotBody->SetAngularVelocity(sign * angleDiff * 0.1);

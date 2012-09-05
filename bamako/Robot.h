@@ -14,11 +14,11 @@ public:
     void KeyboardInput(QMap<int, bool> keyStates);
 
     float angle;
+    Asserv *asserv;
     b2Vec2 position;
     b2Body *robotBody;
 
 private:
-    Asserv *asserv;
     Simulator *simulator;
 
     // Les consignes arriveront dans le signal QTcpSocket::readyRead().

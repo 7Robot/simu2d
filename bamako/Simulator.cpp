@@ -47,6 +47,7 @@ void Simulator::populate()
     addPolygon(robotBody, polygonShape, fixtureDef, Qt::gray);
     addFriction(robotBody);
     robot = new Robot(this, robotBody);
+    robot->asserv->setDist(20);
 
     // Coin.
     bodyDef.position.Set(0.0f, 0.0f);

@@ -8,6 +8,7 @@
  */
 
 #include <Box2D.h>
+#include <iostream>
 #include "Simulator.h"
 
 enum MotionControlType
