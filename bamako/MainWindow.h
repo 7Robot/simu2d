@@ -22,6 +22,11 @@ public:
 public slots:
     void pause();
 
+    void plusDist();
+    void minusDist();
+    void plusRot();
+    void minusRot();
+
 
 private:
     Ui::MainWindow *ui;

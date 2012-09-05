@@ -4,13 +4,11 @@
 #include <Box2D.h>
 #include "Simulator.h"
 
-enum MotionControlType
+enum MotionControl
 {
-    FreerunControl  = 0,
-    AngleControl    = 0x1,
-    DistanceControl = 0x2,
-    PolarControl    = 0x3,
-    SpeedControl    = 0x4
+    ControlFreerun,
+    ControlSetpoint,
+    ControlSpeed
 };
 
 class Robot
@@ -20,24 +18,34 @@ public:
     void Step();
     void KeyboardInput(QMap<int, bool> keyStates);
 
-    float angle;
-    b2Vec2 position;
-    float speed;
     b2Body *robotBody;
 
-private:
-    float angleSetpoint;
+    // Motion control.
     float distanceSetpoint;
-    float omegaLimit;
-    float speedLimit;
-    MotionControlType motionControl;
+    float distanceSetSpeed;
+    float distanceMaxSpeed;
+    float distanceMaxAccel;
+    MotionControl distanceControl;
+    float angleSetpoint;
+    float angleSetSpeed;
+    float angleMaxSpeed;
+    float angleMaxAccel;
+    MotionControl angleControl;
 
-    // PID
-    float speedErrorInt;
+private:
+    // Odometry.
+    b2Vec2 position;
+    b2Vec2 positionOffset;
+    float angle;
+    float angleOffset;
 
     Simulator *simulator;
-
-    // Les consignes arriveront dans le signal QTcpSocket::readyRead().
 };
+
+
+template <typename T> int sgn(T val) // http://stackoverflow.com/questions/1903954/is-there-a-standard-sign-function-signum-sgn-in-c-c
+{
+    return (T(0) < val) - (val < T(0));
+}
 
 #endif // ROBOT_H

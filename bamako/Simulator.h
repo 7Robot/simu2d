@@ -21,6 +21,7 @@ public:
     void populate();
     void start();
     bool stop();
+    void plotStep(double a0, double a1 = 0);
     ~Simulator();
 
     b2World *world;

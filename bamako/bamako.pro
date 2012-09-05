@@ -30,4 +30,4 @@ FORMS    += \
     MainWindow.ui
 
 INCLUDEPATH +=/usr/local/include/Box2D/
-LIBS += -lBox2D #utile ?
+LIBS += -lBox2D

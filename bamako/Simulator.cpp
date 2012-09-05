@@ -37,7 +37,8 @@ void Simulator::populate()
 
     // Robot.
     bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(1.2f, 0.7f);
+    bodyDef.position.Set(0, 0);
+    //bodyDef.position.Set(1.2f, 0.7f);
     bodyDef.angle = 0.0f;
     robotBody = world->CreateBody(&bodyDef);
     polygonShape.SetAsBox(0.2f, 0.2f);
@@ -48,7 +49,7 @@ void Simulator::populate()
     robot = new Robot(this, robotBody);
 
     // Coin.
-    bodyDef.position.Set(0.0f, 0.0f);
+    bodyDef.position.Set(-1.f, -1.f);
     b2Body *coinBody = world->CreateBody(&bodyDef);
     circleShape.m_radius = 0.06f;
     fixtureDef.density = 1.0f;
@@ -64,14 +65,14 @@ void Simulator::populate()
 void Simulator::addFriction(b2Body *body)
 {
     float32 mass = body->GetMass();
-    float32 I = body->GetInertia();
+    //float32 I = body->GetInertia();
 
     b2FrictionJointDef jd;
     jd.bodyA = groundBody;
     jd.bodyB = body;
     jd.collideConnected = true;
     jd.maxForce = mass * gravity;
-    jd.maxTorque = I * gravity; // TODO
+    jd.maxTorque = .2 * mass * gravity; // TODO
 
     world->CreateJoint(&jd);
 }
@@ -118,6 +119,12 @@ bool Simulator::stop()
     killTimer(timerId);
     timerId = 0;
     return tmp;
+}
+
+void Simulator::plotStep(double a0, double a1)
+{
+    if(mainWindow)
+        mainWindow->plotStep(a0, a1);
 }
 
 Simulator::~Simulator()

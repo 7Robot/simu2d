@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include "qcustomplot.h"
+#include "Robot.h"
 
 MainWindow::MainWindow(Simulator* simulator, QWidget *parent) :
     QMainWindow(parent),
@@ -40,6 +41,30 @@ void MainWindow::pause()
 {
     if(!ui->simulatorView->scene()->simulator->stop())
         ui->simulatorView->scene()->simulator->start();
+}
+
+void MainWindow::plusDist()
+{
+    ui->simulatorView->scene()->simulator->robot->distanceControl = ControlSetpoint;
+    ui->simulatorView->scene()->simulator->robot->distanceSetpoint = .5;
+}
+
+void MainWindow::minusDist()
+{
+    ui->simulatorView->scene()->simulator->robot->distanceControl = ControlSetpoint;
+    ui->simulatorView->scene()->simulator->robot->distanceSetpoint = -.5;
+}
+
+void MainWindow::plusRot()
+{
+    ui->simulatorView->scene()->simulator->robot->angleControl = ControlSetpoint;
+    ui->simulatorView->scene()->simulator->robot->angleSetpoint = PI/3;
+}
+
+void MainWindow::minusRot()
+{
+    ui->simulatorView->scene()->simulator->robot->angleControl = ControlSetpoint;
+    ui->simulatorView->scene()->simulator->robot->angleSetpoint = -PI/3;
 }
 
 MainWindow::~MainWindow()

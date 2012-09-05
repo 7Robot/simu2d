@@ -36,7 +36,7 @@ void SimulatorScene::mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent)
         md.bodyA = simulator->groundBody;
         md.bodyB = body;
         md.target = mousePos;
-        md.maxForce = 1000.0f * body->GetMass();
+        md.maxForce = 2000.0f * body->GetMass();
         mouseJoint = (b2MouseJoint*)simulator->world->CreateJoint(&md);
         body->SetAwake(true);
     }
