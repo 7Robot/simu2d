@@ -31,4 +31,4 @@ FORMS    += \
 
 INCLUDEPATH += Box2D_v2.2.1/Box2D
 
-LIBS     += ../bamako/Box2D_v2.2.1/Build/Box2D/libBox2D.a
+LIBS     += /usr/local/lib/libBox2D.a
