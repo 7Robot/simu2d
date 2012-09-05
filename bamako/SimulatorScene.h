@@ -2,7 +2,7 @@
 #define SIMULATORSCENE_H
 
 #include <QtGui>
-#include <Box2D.h>
+#include "Box2D.h"
 
 class Simulator;
 

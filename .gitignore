@@ -1,0 +1,5 @@
+*.o
+moc_*
+*.pro.user
+Makefile
+bamako/Box2D_v2.2.1/Build

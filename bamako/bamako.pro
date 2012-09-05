@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT      += core gui
 
 TARGET = bamako
 TEMPLATE = app
@@ -29,5 +29,6 @@ HEADERS  += \
 FORMS    += \
     MainWindow.ui
 
-INCLUDEPATH +=/usr/local/include/Box2D/
-LIBS += -lBox2D
+INCLUDEPATH += Box2D_v2.2.1/Box2D
+
+LIBS     += ../bamako/Box2D_v2.2.1/Build/Box2D/libBox2D.a

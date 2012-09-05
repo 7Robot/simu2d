@@ -2,6 +2,7 @@
 #include "SimulatorScene.h"
 #include "Robot.h"
 #include "MainWindow.h"
+#include "Box2D.h"
 
 Simulator::Simulator(QObject *parent)
     : QObject(parent), mainWindow(NULL), scene(NULL), timerId(0), gravity(9.8), time(0)
