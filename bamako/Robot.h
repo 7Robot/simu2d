@@ -24,4 +24,5 @@ private:
     // Les consignes arriveront dans le signal QTcpSocket::readyRead().
 };
 
+
 #endif // ROBOT_H

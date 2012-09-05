@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "Robot.h"
 #include "ui_MainWindow.h"
 #include "qcustomplot.h"
 
@@ -36,10 +37,31 @@ void MainWindow::plotStep(double a0, double a1)
     time += B2_TIMESTEP;
 }
 
+
 void MainWindow::pause()
 {
     if(!ui->simulatorView->scene()->simulator->stop())
         ui->simulatorView->scene()->simulator->start();
+}
+
+void MainWindow::plusDist()
+{
+    ui->simulatorView->scene()->simulator->robot->asserv->setDist(0.5);
+}
+
+void MainWindow::minusDist()
+{
+    ui->simulatorView->scene()->simulator->robot->asserv->setDist(-0.5);
+}
+
+void MainWindow::plusRot()
+{
+    ui->simulatorView->scene()->simulator->robot->asserv->setAngle(PI/3);
+}
+
+void MainWindow::minusRot()
+{
+    ui->simulatorView->scene()->simulator->robot->asserv->setAngle(-PI/3);
 }
 
 MainWindow::~MainWindow()

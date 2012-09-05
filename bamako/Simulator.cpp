@@ -38,16 +38,18 @@ void Simulator::populate()
 
     // Robot.
     bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(1.2f, 0.7f);
+    bodyDef.position.Set(1.1, 0.0);
     bodyDef.angle = 0.0f;
     robotBody = world->CreateBody(&bodyDef);
     polygonShape.SetAsBox(0.2f, 0.2f);
-    fixtureDef.density = 1.0f;
+    //fixtureDef.density = 1.0f; // empêche faible changements de vitesse
     fixtureDef.friction = 0.3f;
     addPolygon(robotBody, polygonShape, fixtureDef, Qt::gray);
     addFriction(robotBody);
     robot = new Robot(this, robotBody);
-    robot->asserv->setDist(20);
+    //robot->asserv->setDist(-1.2);
+    //robot->asserv->setDist(1.5);
+    //robot->asserv->setAngle(-3.14);
 
     // Coin.
     bodyDef.position.Set(0.0f, 0.0f);
