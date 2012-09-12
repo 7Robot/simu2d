@@ -3,6 +3,7 @@
 #include "Robot.h"
 #include "MainWindow.h"
 #include "Box2D.h"
+#include <QtSvg>
 
 Simulator::Simulator(QObject *parent)
     : QObject(parent), mainWindow(NULL), scene(NULL), timerId(0), gravity(9.8), time(0)
@@ -23,7 +24,7 @@ void Simulator::populate()
     groundBody = world->CreateBody(&bodyDef);
     polygonShape.SetAsBox(1.5f, 1.0f);
     fixtureDef.isSensor = true;
-    addPolygon(groundBody, polygonShape, fixtureDef, Qt::blue);
+    addSvgPolygon(groundBody, polygonShape, fixtureDef);
 
     // Ground borders.
     b2Vec2 vs[4];
@@ -38,16 +39,23 @@ void Simulator::populate()
 
     // Robot.
     bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(0, 0);
-    //bodyDef.position.Set(1.2f, 0.7f);
-    bodyDef.angle = 0.0f;
+    bodyDef.position.Set(1.2f, 0.7f);
+    bodyDef.angle = PI;
     robotBody = world->CreateBody(&bodyDef);
     polygonShape.SetAsBox(0.2f, 0.2f);
-    fixtureDef.density = 1.0f;
-    fixtureDef.friction = 0.3f;
-    addPolygon(robotBody, polygonShape, fixtureDef, Qt::gray);
+    fixtureDef.density = 1.5f;
+    fixtureDef.friction = 0.9f;
+    addPolygon(robotBody, polygonShape, fixtureDef, Qt::red);
     addFriction(robotBody);
     robot = new Robot(this, robotBody);
+
+    // Opponent.
+    bodyDef.position.Set(-1.2f, 0.7f);
+    bodyDef.angle = 0.0f;
+    opponentBody = world->CreateBody(&bodyDef);
+    addPolygon(opponentBody, polygonShape, fixtureDef, Qt::blue);
+    addFriction(opponentBody);
+    opponent = new Robot(this, opponentBody);
 
     // Coin.
     bodyDef.position.Set(-1.f, -1.f);
@@ -63,19 +71,19 @@ void Simulator::populate()
     updateScene();
 }
 
-void Simulator::addFriction(b2Body *body)
+void Simulator::addSvgPolygon(b2Body *body, b2PolygonShape &shape, b2FixtureDef &fixtureDef)
 {
-    float32 mass = body->GetMass();
-    //float32 I = body->GetInertia();
+    fixtureDef.shape = &shape;
+    b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 
-    b2FrictionJointDef jd;
-    jd.bodyA = groundBody;
-    jd.bodyB = body;
-    jd.collideConnected = true;
-    jd.maxForce = mass * gravity;
-    jd.maxTorque = .2 * mass * gravity; // TODO
+    if(scene != NULL) {
+        QGraphicsSvgItem *item = new QGraphicsSvgItem();
+        item->setSharedRenderer(scene->renderer);
+        item->setElementId("background"); // TODO
 
-    world->CreateJoint(&jd);
+        scene->addItem(item);
+        fixture->SetUserData((void*)item);
+    }
 }
 
 void Simulator::addPolygon(b2Body *body, b2PolygonShape &shape, b2FixtureDef &fixtureDef, QColor color)
@@ -108,6 +116,21 @@ void Simulator::addCircle(b2Body *body, b2CircleShape &shape, b2FixtureDef &fixt
     }
 }
 
+void Simulator::addFriction(b2Body *body)
+{
+    float32 mass = body->GetMass();
+    //float32 I = body->GetInertia();
+
+    b2FrictionJointDef jd;
+    jd.bodyA = groundBody;
+    jd.bodyB = body;
+    jd.collideConnected = true;
+    jd.maxForce = mass * gravity;
+    jd.maxTorque = .2 * mass * gravity;
+
+    world->CreateJoint(&jd);
+}
+
 void Simulator::start()
 {
     if (!timerId)
@@ -120,12 +143,6 @@ bool Simulator::stop()
     killTimer(timerId);
     timerId = 0;
     return tmp;
-}
-
-void Simulator::plotStep(double a0, double a1)
-{
-    if(mainWindow)
-        mainWindow->plotStep(a0, a1);
 }
 
 Simulator::~Simulator()
@@ -151,7 +168,7 @@ void Simulator::updateScene() // Refresh the interface.
                 if(userdata != NULL) {
                     QGraphicsItem* item = (QGraphicsItem*)userdata;
                     item->setPos(position.x, position.y);
-                    item->setRotation(angle * 180.0 / PI);
+                    //item->setRotation(angle * 180.0 / PI); // TODO
                 }
             }
         }
@@ -161,7 +178,18 @@ void Simulator::updateScene() // Refresh the interface.
 void Simulator::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == timerId) {
-        robot->Step();
+        robot->preStep();
+        opponent->preStep();
+
+        // World simulation.
+        world->Step(B2_TIMESTEP, B2_VELOCITY_ITERATIONS, B2_POSITION_ITERATIONS);
+
+        robot->postStep();
+        opponent->postStep();
+
+        b2Vec2 pos = robot->position - robot->positionOffset;
+        mainWindow->debugString(QString("x=%1  y=%2").arg(pos.x).arg(pos.y));
+
         updateScene();
     }
     QObject::timerEvent(event);

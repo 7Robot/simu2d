@@ -3,6 +3,8 @@
 #include "qcustomplot.h"
 #include "Robot.h"
 
+#include <QtSvg> // HACK TODO remove
+
 MainWindow::MainWindow(Simulator* simulator, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow), time(0)
@@ -17,9 +19,23 @@ MainWindow::MainWindow(Simulator* simulator, QWidget *parent) :
     ui->plot->graph(1)->setPen(QPen(Qt::red));
     //ui->plot->setRangeDrag(Qt::Horizontal | Qt::Vertical);
     ui->plot->setRangeZoom(Qt::Horizontal);
+
+    // TODO remove
+    QSvgRenderer *renderer = new QSvgRenderer(QLatin1String("plateau2012.svg"));
+    QGraphicsSvgItem *black = new QGraphicsSvgItem();
+    black->setSharedRenderer(renderer);
+    black->setElementId(QLatin1String("background"));
+    black->setScale(0.01);
+    renderer->
+    renderer->
+    black->translate(-1.5, -1);
+    QGraphicsScene * sc = new QGraphicsScene();
+    ui->graphicsView->setScene(sc);
+    simulator->scene->addItem(black);
+    ui->graphicsView->scene()->addRect(0, 0, 100, 150);
 }
 
-void MainWindow::plotStep(double a0, double a1)
+void MainWindow::debugPlot(double a0, double a1)
 {
     QCPGraph * graph0 = ui->plot->graph(0);
     QCPGraph * graph1 = ui->plot->graph(1);
@@ -35,6 +51,11 @@ void MainWindow::plotStep(double a0, double a1)
 
     ui->plot->replot();
     time += B2_TIMESTEP;
+}
+
+void MainWindow::debugString(QString str)
+{
+    ui->label->setText(str);
 }
 
 void MainWindow::pause()

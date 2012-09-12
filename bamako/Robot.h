@@ -15,8 +15,9 @@ class Robot
 {
 public:
     Robot(Simulator *simulator, b2Body *robotBody);
-    void Step();
-    void KeyboardInput(QMap<int, bool> keyStates);
+    void preStep();
+    void postStep();
+    void keyboardInput(QMap<int, bool> keyStates);
 
     b2Body *robotBody;
 
@@ -25,20 +26,25 @@ public:
     float distanceSetSpeed;
     float distanceMaxSpeed;
     float distanceMaxAccel;
+    float distanceError;
+    float distanceErrorInteg;
     MotionControl distanceControl;
     float angleSetpoint;
     float angleSetSpeed;
     float angleMaxSpeed;
     float angleMaxAccel;
+    float angleError;
+    float angleErrorInteg;
     MotionControl angleControl;
 
-private:
     // Odometry.
     b2Vec2 position;
     b2Vec2 positionOffset;
     float angle;
     float angleOffset;
 
+
+private:
     Simulator *simulator;
 };
 

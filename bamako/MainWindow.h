@@ -16,7 +16,8 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(Simulator *simulator, QWidget *parent = 0);
-    void plotStep(double a0, double a1 = 0);
+    void debugPlot(double a0, double a1 = 0);
+    void debugString(QString str);
     ~MainWindow();
 
 public slots:

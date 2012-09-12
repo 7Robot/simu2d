@@ -18,7 +18,6 @@ public:
     SimulatorScene * scene();
 
 private:
-    void RefreshSetpoints();
 
     QMap<int, bool> keyStates;
 

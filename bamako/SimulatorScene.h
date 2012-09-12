@@ -2,7 +2,9 @@
 #define SIMULATORSCENE_H
 
 #include <QtGui>
+#include <QtSvg>
 #include "Box2D.h"
+
 
 class Simulator;
 
@@ -14,7 +16,9 @@ public:
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent * mouseEvent);
+
     Simulator *simulator;
+    QSvgRenderer * renderer;
     
 private:
     b2Vec2 mousePos;

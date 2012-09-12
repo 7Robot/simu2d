@@ -8,6 +8,8 @@ SimulatorScene::SimulatorScene(Simulator *simulator, QWidget *parent) :
 {
     setItemIndexMethod(QGraphicsScene::NoIndex);
     setSceneRect(-1.50, -1.0, 3.0, 2.0);
+
+    renderer = new QSvgRenderer(QLatin1String(":/res/plateau2012.svg"));
 }
 
 void SimulatorScene::mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent)

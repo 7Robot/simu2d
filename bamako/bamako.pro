@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT      += core gui
+QT      += core gui svg
 
 TARGET = bamako
 TEMPLATE = app
@@ -29,6 +29,12 @@ HEADERS  += \
 FORMS    += \
     MainWindow.ui
 
-INCLUDEPATH += Box2D_v2.2.1/Box2D
+INCLUDEPATH +=/usr/local/include/Box2D
 
 LIBS     += /usr/local/lib/libBox2D.a
+
+OTHER_FILES += \
+    plateau2012.svg
+
+RESOURCES += \
+    res.qrc

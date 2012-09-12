@@ -21,21 +21,23 @@ public:
     void populate();
     void start();
     bool stop();
-    void plotStep(double a0, double a1 = 0);
     ~Simulator();
 
     b2World *world;
     Robot *robot;
+    Robot *opponent;
     MainWindow * mainWindow;
     SimulatorScene *scene;
 
     b2Body* groundBody;
     b2Body* robotBody;
+    b2Body* opponentBody;
 
 protected:
     void timerEvent(QTimerEvent *event);
 
 private:
+    void addSvgPolygon(b2Body *body, b2PolygonShape &shape, b2FixtureDef &fixtureDef);
     void addPolygon(b2Body *body, b2PolygonShape &shape, b2FixtureDef &fixtureDef, QColor color);
     void addCircle (b2Body *body, b2CircleShape  &shape, b2FixtureDef &fixtureDef, QColor color);
     void addFriction(b2Body *body);

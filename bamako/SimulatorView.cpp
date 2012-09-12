@@ -58,7 +58,7 @@ void SimulatorView::keyPressEvent(QKeyEvent * event)
     if(keyStates.contains(event->key())) {
         keyStates[event->key()] = true;
         if(scene())
-            scene()->simulator->robot->KeyboardInput(keyStates);
+            scene()->simulator->robot->keyboardInput(keyStates);
     }
     else
         QWidget::keyPressEvent(event);
@@ -69,7 +69,7 @@ void SimulatorView::keyReleaseEvent(QKeyEvent * event)
     if(keyStates.contains(event->key())) {
         keyStates[event->key()] = false;
         if(scene())
-            scene()->simulator->robot->KeyboardInput(keyStates);
+            scene()->simulator->robot->keyboardInput(keyStates);
     }
     else
         QWidget::keyReleaseEvent(event);
