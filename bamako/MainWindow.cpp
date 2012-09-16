@@ -26,8 +26,6 @@ MainWindow::MainWindow(Simulator* simulator, QWidget *parent) :
     black->setSharedRenderer(renderer);
     black->setElementId(QLatin1String("background"));
     black->setScale(0.01);
-    renderer->
-    renderer->
     black->translate(-1.5, -1);
     QGraphicsScene * sc = new QGraphicsScene();
     ui->graphicsView->setScene(sc);

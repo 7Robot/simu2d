@@ -2,7 +2,7 @@
 #define SIMULATOR_H
 
 #include <QtGui>
-#include "Box2D.h"
+#include "Box2D/Box2D.h"
 
 static const float32 B2_TIMESTEP = 1.0f / 60.0f;
 static const int32 B2_VELOCITY_ITERATIONS = 6;

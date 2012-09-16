@@ -1,7 +1,7 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 
-#include <Box2D.h>
+#include <Box2D/Box2D.h>
 #include "Simulator.h"
 
 enum MotionControl

@@ -2,7 +2,7 @@
 #include "SimulatorScene.h"
 #include "Robot.h"
 #include "MainWindow.h"
-#include "Box2D.h"
+#include "Box2D/Box2D.h"
 #include <QtSvg>
 
 Simulator::Simulator(QObject *parent)
