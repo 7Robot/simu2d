@@ -53,6 +53,7 @@ void Simulator::populate()
 
     // Coin.
     bodyDef.position.Set(0.0f, 0.0f);
+    bodyDef.bullet = true;
     b2Body *coinBody = world->CreateBody(&bodyDef);
     circleShape.m_radius = 0.06f;
     fixtureDef.density = 1.0f;
