@@ -58,6 +58,7 @@ add_executable(simu2d
 	${simu2d_FORMS_HEADERS} 
 	${simu2d_RESOURCES_RCC})
 
+target_link_libraries(simu2d -lm)
 target_link_libraries(simu2d ${QT_LIBRARIES})
 target_link_libraries(simu2d Box2D)
 

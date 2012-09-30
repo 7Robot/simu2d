@@ -3,6 +3,7 @@
 
 #include <Box2D/Box2D.h>
 #include "Simulator.h"
+#include "Sensor.h"
 
 enum MotionControl
 {
@@ -10,6 +11,10 @@ enum MotionControl
     ControlSetpoint,
     ControlSpeed
 };
+
+// FIXME cyclic references
+class Sensor;
+class RangeFinder;
 
 class Robot
 {
@@ -46,6 +51,7 @@ public:
 
 private:
     Simulator *simulator;
+    RangeFinder* sensor;
 };
 
 

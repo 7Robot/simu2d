@@ -23,6 +23,10 @@ Robot::Robot(Simulator *simulator, b2Body *robotBody) : robotBody(robotBody), si
     angleError = 0;
     angleErrorInteg = 0;
     angleControl  = ControlSetpoint;
+    
+    sensor = new RangeFinder(simulator->world, this, b2Vec2(0,0), 0, 0, 2);
+    sensor->threshold = 0.5;
+    sensor->mode = range;
 }
 
 // http://www.iforce2d.net/b2dtut/constant-speed
@@ -31,6 +35,11 @@ void Robot::preStep()
 {
     float speed = b2Dot(robotBody->GetLinearVelocity(), b2Rot(angle).GetXAxis());
     float angularSpeed = robotBody->GetAngularVelocity();
+    
+    float dist = sensor->sense();
+    if (dist != 0)
+        printf("rf %f\n", dist);
+    
 
     // Motion control for distances.
     if(distanceControl != ControlFreerun) {

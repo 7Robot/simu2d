@@ -50,12 +50,14 @@ void Simulator::populate()
     robot = new Robot(this, robotBody);
 
     // Opponent.
+    /*
     bodyDef.position.Set(-1.2f, 0.7f);
     bodyDef.angle = 0.0f;
     opponentBody = world->CreateBody(&bodyDef);
     addPolygon(opponentBody, polygonShape, fixtureDef, Qt::blue);
     addFriction(opponentBody);
     opponent = new Robot(this, opponentBody);
+     */ 
 
     // Coin.
     bodyDef.position.Set(-1.f, -1.f);
@@ -179,13 +181,13 @@ void Simulator::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == timerId) {
         robot->preStep();
-        opponent->preStep();
+        //opponent->preStep();
 
         // World simulation.
         world->Step(B2_TIMESTEP, B2_VELOCITY_ITERATIONS, B2_POSITION_ITERATIONS);
 
         robot->postStep();
-        opponent->postStep();
+        //opponent->postStep();
 
         b2Vec2 pos = robot->position - robot->positionOffset;
         mainWindow->debugString(QString("x=%1  y=%2").arg(pos.x).arg(pos.y));
