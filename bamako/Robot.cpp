@@ -27,6 +27,8 @@ Robot::Robot(Simulator *simulator, b2Body *robotBody) : robotBody(robotBody), si
     sensor = new RangeFinder(simulator->world, this, b2Vec2(0,0), 0, 0, 2);
     sensor->threshold = 0.5;
     sensor->mode = range;
+    
+    turret = new Turret180(simulator->world, this, b2Vec2(0,0), 0, 0, 0.6);
 }
 
 // http://www.iforce2d.net/b2dtut/constant-speed
@@ -37,8 +39,13 @@ void Robot::preStep()
     float angularSpeed = robotBody->GetAngularVelocity();
     
     float dist = sensor->sense();
-    if (dist != 0)
-        printf("rf %f\n", dist);
+    //if (dist != 0)
+    //    printf("rf %f\n", dist);
+    
+    float dist2 = turret->sense();
+    if (dist2 != 0)
+        printf("rf %f\n", dist2);
+    
     
 
     // Motion control for distances.

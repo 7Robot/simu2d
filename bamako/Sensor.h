@@ -46,6 +46,7 @@ public:
     virtual ~Sensor();
     virtual float sense();
     
+    float    sensorTheta;
     bool mute;
     
 protected:
@@ -53,7 +54,6 @@ protected:
     b2World* world;
     b2Vec2   sensorPos;
     float    height;
-    float    sensorTheta;
     float    rangeMax;
 private:
     DISALLOW_COPY_AND_ASSIGN(Sensor);
@@ -68,7 +68,7 @@ public:
     float sense();
     
 private:
-    DISALLOW_COPY_AND_ASSIGN(RangeFinder);
+    DISALLOW_COPY_AND_ASSIGN(Bumper);
 };
 
 enum RFMode {
@@ -90,6 +90,20 @@ public:
 private:
     float prevDist;
     DISALLOW_COPY_AND_ASSIGN(RangeFinder);
+};
+
+class Turret180 : public Sensor {
+public:
+    Turret180(b2World* world, Robot* robot, b2Vec2 sensorPos, float height, 
+            float sensorTheta, float rangeMax);
+    virtual ~Turret180();
+    float sense();
+    
+private:
+    float angle;
+    int rotSide;
+    RangeFinder* sensor;
+    DISALLOW_COPY_AND_ASSIGN(Turret180);
 };
 
 #endif	/* SENSOR_H */

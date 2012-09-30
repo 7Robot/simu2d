@@ -50,7 +50,7 @@ Bumper::Bumper(b2World* world, Robot* robot, b2Vec2 sensorPos, float height,
 Bumper::~Bumper() {
 }
 
-Bumper::sense()
+float Bumper::sense()
 {
     return Sensor::sense();
 }
@@ -94,4 +94,32 @@ float RangeFinder::sense()
             return 0;
         }
     }
+}
+
+Turret180::Turret180(b2World* world, Robot* robot, b2Vec2 sensorPos, float height, 
+            float sensorTheta, float rangeMax) : 
+    Sensor(world, robot, sensorPos, height, sensorTheta, rangeMax)  
+{
+    angle = 0;
+    rotSide = 1;
+    sensor = new RangeFinder(world, robot, sensorPos, height, sensorTheta, rangeMax);
+    // TODO: mettre éventuellement 2 ou 3 autres rangefinder au cas où on balaie trop rapidement
+}
+
+
+Turret180::~Turret180() {
+}
+
+// FIXME utiliser un template sur Sensor pour renvoyer un ou des couples (distance, angle)
+float Turret180::sense()
+{
+    angle += rotSide*PI/60;
+    if (angle > PI/2)
+        rotSide = -1;
+    else if (angle < -PI/2)
+        rotSide = 1;
+    
+    sensor->sensorTheta = sensorTheta+angle;
+    return sensor->sense();
+    
 }

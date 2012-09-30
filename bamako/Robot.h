@@ -15,6 +15,7 @@ enum MotionControl
 // FIXME cyclic references
 class Sensor;
 class RangeFinder;
+class Turret180;
 
 class Robot
 {
@@ -52,6 +53,7 @@ public:
 private:
     Simulator *simulator;
     RangeFinder* sensor;
+    Turret180* turret;
 };
 
 
