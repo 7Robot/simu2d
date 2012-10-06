@@ -17,7 +17,8 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     svgview.h \
-    svgscene.h
+    svgscene.h \
+    Object.h
 
 FORMS    += mainwindow.ui
 

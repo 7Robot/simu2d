@@ -53,13 +53,13 @@ void SvgScene::ParseSvg(QString path)
         QString layerName = layer.attribute("inkscape:label");
 
         if(layerName == "background" || layerName == "static") {
-            AddSvgItem(layer);
+            AddSvgItem(parseItem(layer), 0, 0);
         }
         else if(layerName == "dynamic") {
             QDomElement element = layer.firstChildElement();
 
             while(!element.isNull()) { // Add elements independantly.
-                dynamicBodies[element.attribute("id")] = AddSvgItem(element);;
+                dynamicBodies[element.attribute("id")] = AddSvgItem(parseItem(element), 0, 0);
 
                 element = element.nextSiblingElement();
             }
@@ -69,7 +69,22 @@ void SvgScene::ParseSvg(QString path)
     }
 }
 
-QGraphicsSvgItem * SvgScene::AddSvgItem(QDomElement element)
+Object SvgScene::parseItem(QDomElement element) {
+    float zmin = 0;
+    float zmax = 0;
+    if (element.hasAttribute("zmin") && element.hasAttribute("zmax")) {
+        zmin = element.attribute("zmin").toFloat();
+        zmax = element.attribute("zmax").toFloat();
+    }
+    Object obj = Object(element.attribute("id").toStdString(),
+                        element.attribute("x").toFloat(),
+                        element.attribute("y").toFloat(),
+                        0.0F, zmin, zmax);
+    return obj;
+}
+
+/*
+QGraphicsSvgItem * SvgScene::AddSvgItem0(QDomElement element)
 {
     QGraphicsSvgItem * item = new QGraphicsSvgItem();
     item->setSharedRenderer(renderer);
@@ -84,6 +99,27 @@ QGraphicsSvgItem * SvgScene::AddSvgItem(QDomElement element)
     item->setTransform(transform);
     item->setTransformOriginPoint(-offsetX, -offsetY); // For rotations.
 
+    addItem(item);
+    return item;
+}*/
+
+QGraphicsSvgItem * SvgScene::AddSvgItem(Object object, float center_x, float center_y)
+{
+    QGraphicsSvgItem * item = new QGraphicsSvgItem();
+    item->setSharedRenderer(renderer);
+    item->setElementId(QString::fromStdString(object.id));
+
+    QPointF center = item->boundingRect().center();
+    qreal offsetX = center_x - center.x();
+    qreal offsetY = center_y - center.y();
+
+    QTransform transform;
+    transform.translate(offsetX, offsetY);
+    item->setTransform(transform);
+    item->setTransformOriginPoint(-offsetX, -offsetY); // For rotations.
+
+    printf("%s %f %f\n", object.id.c_str(), object.x, object.y);
+    item->setPos(object.x, object.y);
     addItem(item);
     return item;
 }

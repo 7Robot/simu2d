@@ -6,6 +6,10 @@
 #include <QtNetwork>
 #include <QtXml>
 
+#include<stdio.h>
+
+#include "Object.h"
+
 class SvgScene : public QGraphicsScene
 {
     Q_OBJECT
@@ -24,7 +28,8 @@ private slots:
     
 private:
     void ParseSvg(QString path);
-    QGraphicsSvgItem * AddSvgItem(QDomElement element);
+    QGraphicsSvgItem * AddSvgItem(Object object, float center_x=0, float center_y=0);
+    Object parseItem(QDomElement element);
 
     QMap<int, bool> keyStates;
     QMap<QString, QGraphicsSvgItem*> dynamicBodies;
