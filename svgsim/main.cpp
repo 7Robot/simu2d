@@ -58,8 +58,7 @@ void ParseBody(QDomElement element, b2Body * body)
                 fixtureDef.shape = &chainShape;
             }
             else { // Filled polygon.
-                polygonShape.
-                fixtureDef.shape = &polygonShape;
+                //polygonShape.fixtureDef.shape = &polygonShape;
             }
             float32 w = element.attribute("width").toFloat() / 2;
             float32 h = element.attribute("height").toFloat() / 2;
